@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:parsed_readmore/parsed_readmore.dart';
@@ -101,6 +103,17 @@ class TextHighlightParser {
     required void Function(TapGestureRecognizer recognizer)
         trackActiveTapGesture,
   }) {
+    final textSpans = <TextSpan>[];
+
+    if (maxShowCharactersLength == 0) {
+      return textSpans;
+    }
+
+    // If maxShowCharactersLength is bigger then data.length then
+    // we set maxShowCharactersLength equal to data.length, 
+    // to prevent index out of bounds error.
+    maxShowCharactersLength = min(maxShowCharactersLength, data.length);
+
     final allIndexes = Set<int>.unmodifiable(
       Iterable<int>.generate(maxShowCharactersLength + 1),
     );
@@ -137,11 +150,6 @@ class TextHighlightParser {
     final allHighlightIndexes = allHighlightIndexesSet.toList()..sort();
     final nonHighlightIndexes =
         allIndexes.difference(allHighlightIndexesSet).toList()..sort();
-    final textSpans = <TextSpan>[];
-
-    if (maxShowCharactersLength == 0) {
-      return textSpans;
-    }
 
     for (var i = 0; i < maxShowCharactersLength + 1; i++) {
       // We have -1 as end index is also increased by 1, and when next time
