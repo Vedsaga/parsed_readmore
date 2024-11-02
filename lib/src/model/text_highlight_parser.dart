@@ -65,6 +65,28 @@ class TextHighlightParser {
     }
   }
 
+  List<TextRange> findMatches(String data, String pattern,
+      {bool caseSensitive = false}) {
+    List<TextRange> matches = [];
+    String searchIn = caseSensitive ? data : data.toLowerCase();
+    String searchFor = caseSensitive ? pattern : pattern.toLowerCase();
+
+    int startIndex = 0;
+    while (true) {
+      int index = searchIn.indexOf(searchFor, startIndex);
+      if (index == -1) break;
+
+      matches.add(TextRange(
+        start: index,
+        end: index + pattern.length,
+      ));
+
+      startIndex = index + 1; // or index + pattern.length to avoid overlapping
+    }
+
+    return matches;
+  }
+
   List<TextHighlight> findTextHighlights() {
     final patternMatches = <TextHighlight>[];
     final targetHighlights = targetTextHighlights?.targetHighlights;
@@ -73,20 +95,31 @@ class TextHighlightParser {
     }
 
     for (final targetHighlight in targetHighlights) {
-      final regExp = RegExp(targetHighlight.targetText,
-          caseSensitive: targetHighlight.caseSensitive);
-      final matches = regExp.allMatches(data);
+      // final regExp = RegExp(
+      //   targetHighlight.targetText,
+      //   caseSensitive: targetHighlight.caseSensitive,
+      // );
+      // final matches = regExp.allMatches(data);
 
       var textHighlight = TextHighlight(targetHighlight: targetHighlight);
 
-      for (final match in matches) {
-        textHighlight = textHighlight.copyWith(
-          highlightRanges: {
-            ...textHighlight.highlightRanges,
-            TextRange(start: match.start, end: match.end)
-          },
-        );
-      }
+      // for (final match in matches) {
+      //   textHighlight = textHighlight.copyWith(
+      //     highlightRanges: {
+      //       ...textHighlight.highlightRanges,
+      //       TextRange(start: match.start, end: match.end)
+      //     },
+      //   );
+      // }
+      var ranges = findMatches(data, targetHighlight.targetText,
+          caseSensitive: targetHighlight.caseSensitive);
+
+      textHighlight = textHighlight.copyWith(
+        highlightRanges: {
+          ...textHighlight.highlightRanges,
+          ...ranges,
+        },
+      );
       patternMatches.add(textHighlight);
     }
 
@@ -110,7 +143,7 @@ class TextHighlightParser {
     }
 
     // If maxShowCharactersLength is bigger then data.length then
-    // we set maxShowCharactersLength equal to data.length, 
+    // we set maxShowCharactersLength equal to data.length,
     // to prevent index out of bounds error.
     maxShowCharactersLength = min(maxShowCharactersLength, data.length);
 
