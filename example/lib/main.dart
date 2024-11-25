@@ -141,7 +141,7 @@ class CustomValuesPackage extends StatelessWidget {
                 ),
                 trimMode: TrimMode.line,
                 maxLines: 2,
-                onTapLink: (url) {
+                onTapLinkOverride: (url) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text(

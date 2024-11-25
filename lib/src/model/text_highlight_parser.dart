@@ -13,13 +13,18 @@ class TextHighlightParser {
   const TextHighlightParser({
     required this.data,
     this.targetTextHighlights,
-    this.onTapLink,
+    this.onTapLinkOverride,
     this.urlTextStyle,
+    this.enableOnTapLink = true,
     this.initialState = ReadMoreState.collapsed,
     this.trimMode = TrimMode.character,
     this.maxCharacters = 240,
     this.maxLines = 2,
-  })  : assert(maxLines > 0, 'trimLines must be greater than 0'),
+  })  : assert(
+          onTapLinkOverride == null || enableOnTapLink,
+          'enableOnTapLink must be true if onTapLinkOverride is not null',
+        ),
+        assert(maxLines > 0, 'trimLines must be greater than 0'),
         assert(maxCharacters > 0, 'trimLength must be greater than 0');
 
   /// Initial state of the widget when it is created.
@@ -33,9 +38,15 @@ class TextHighlightParser {
   final TargetTextHighlights? targetTextHighlights;
 
   /// A function called when a link is clicked. The url should start with http:// or https://.
-  /// If the url doesn't start with http:// or https://, or if [onTapLink] is null the link will open
-  /// on the external browser.
-  final void Function(String url)? onTapLink;
+  /// If the url doesn't start with http:// or https://, 
+  /// it will be prefixed with https:// and then pass new url to [onTapLinkOverride].
+  /// If [onTapLinkOverride] is not null, [onTapLinkOverride] will be called instead.
+  final void Function(String url)? onTapLinkOverride;
+
+  /// Whether to enable the link tap.
+  final bool enableOnTapLink;
+
+
 
   /// The url style for the link
   final TextStyle? urlTextStyle;
@@ -243,8 +254,8 @@ class TextHighlightParser {
             url = 'https://$fullUrl';
           }
 
-          onTapLink?.call(fullUrl);
-          if (onTapLink != null) {
+          if (onTapLinkOverride != null) {
+            onTapLinkOverride?.call(fullUrl);
           } else {
             try {
               final launchUri = Uri.parse(url);
@@ -260,9 +271,11 @@ class TextHighlightParser {
           targetSubStringHighlightIndexes: targetSubStringHighlightIndexes,
           effectiveTextStyle: effectiveTextStyle,
           defaultHighlightStyle: defaultHighlightStyle,
-          overrideOnTap: (_) {
-            onTapLinkCallback();
-          },
+          overrideOnTap: !enableOnTapLink
+              ? null
+              : (_) {
+                  onTapLinkCallback();
+                },
           shouldApplyHighlight: (targetHighlight) {
             return targetHighlight.highlightInUrl;
           },
