@@ -38,15 +38,13 @@ class TextHighlightParser {
   final TargetTextHighlights? targetTextHighlights;
 
   /// A function called when a link is clicked. The url should start with http:// or https://.
-  /// If the url doesn't start with http:// or https://, 
+  /// If the url doesn't start with http:// or https://,
   /// it will be prefixed with https:// and then pass new url to [onTapLinkOverride].
   /// If [onTapLinkOverride] is not null, [onTapLinkOverride] will be called instead.
   final void Function(String url)? onTapLinkOverride;
 
   /// Whether to enable the link tap.
   final bool enableOnTapLink;
-
-
 
   /// The url style for the link
   final TextStyle? urlTextStyle;
@@ -329,6 +327,11 @@ class TextHighlightParser {
     required TextStyle effectiveTextStyle,
     required void Function() onTapLinkCallback,
   }) {
+    final TapGestureRecognizer? recognizer =
+        !enableOnTapLink ? null : TapGestureRecognizer();
+    if (enableOnTapLink) {
+      recognizer?.onTap = onTapLinkCallback;
+    }
     return TextSpan(
       text: firstHighlightSubstring,
       children: children,
@@ -337,7 +340,7 @@ class TextHighlightParser {
             color: kAzureRadianceColor,
             decoration: TextDecoration.underline,
           ),
-      recognizer: TapGestureRecognizer()..onTap = onTapLinkCallback,
+      recognizer: recognizer,
     );
   }
 
