@@ -163,7 +163,7 @@ void main() {
       data: inputText,
       trimMode: TrimMode.line,
       urlTextStyle: null,
-      onTapLink: null,
+      onTapLinkOverride: null,
     );
     final allTextHighlights = parser.findTextHighlights();
 
@@ -194,7 +194,7 @@ void main() {
       data: inputText,
       trimMode: TrimMode.line,
       urlTextStyle: const TextStyle(fontSize: 16, color: Colors.green),
-      onTapLink: (url) {},
+      onTapLinkOverride: (url) {},
     );
 
     final allTextHighlights = parser.findTextHighlights();
@@ -223,7 +223,7 @@ void main() {
       data: inputText,
       trimMode: TrimMode.line,
       urlTextStyle: const TextStyle(),
-      onTapLink: (url) {},
+      onTapLinkOverride: (url) {},
     );
 
     final allTextHighlights = parser.findTextHighlights();
@@ -251,7 +251,7 @@ void main() {
       data: inputText,
       trimMode: TrimMode.line,
       urlTextStyle: const TextStyle(),
-      onTapLink: (url) {},
+      onTapLinkOverride: (url) {},
       targetTextHighlights: TargetTextHighlights(targetHighlights: [
         const TargetTextHighlight(
           targetText: 'example',

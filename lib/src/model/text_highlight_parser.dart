@@ -144,7 +144,7 @@ class TextHighlightParser {
     required List<TextHighlight> allTextHighlights,
     required Iterable<TextRange> allUrlRanges,
     required Map<int, TargetTextHighlights> allIndexTargetTextHighlightsMap,
-    required void Function(TapGestureRecognizer recognizer)
+    required void Function(TapGestureRecognizer recognizer)?
         trackActiveTapGesture,
   }) {
     final textSpans = <TextSpan>[];
@@ -348,7 +348,7 @@ class TextHighlightParser {
     required TextStyle? defaultHighlightStyle,
     required Map<int, TargetTextHighlights> allIndexTargetTextHighlightsMap,
     required bool Function(TargetTextHighlight) shouldApplyHighlight,
-    required void Function(TapGestureRecognizer recognizer)
+    required void Function(TapGestureRecognizer recognizer)?
         trackActiveTapGesture,
     void Function(TextRange)? overrideOnTap,
   }) {
@@ -383,7 +383,7 @@ class TextHighlightParser {
     required TextStyle effectiveTextStyle,
     required TextStyle? defaultHighlightStyle,
     required Map<int, TargetTextHighlights> allIndexTargetTextHighlightsMap,
-    required void Function(TapGestureRecognizer recognizer)
+    required void Function(TapGestureRecognizer recognizer)?
         trackActiveTapGesture,
   }) {
     final indexTargetTextHighlightsMap =
@@ -414,7 +414,7 @@ class TextHighlightParser {
     // The below function is used to track active tap gesture
     // so that when the widget is disposed, the active tap gesture
     // is cancelled.
-    required void Function(TapGestureRecognizer recognizer)
+    required void Function(TapGestureRecognizer recognizer)?
         trackActiveTapGesture,
     void Function(TextRange)? overrideOnTap,
   }) {
@@ -467,7 +467,7 @@ class TextHighlightParser {
             recognizer: recognizer,
           ),
         );
-        trackActiveTapGesture(recognizer);
+        trackActiveTapGesture?.call(recognizer);
       } else {
         highlightTextSpans.add(
           TextSpan(
